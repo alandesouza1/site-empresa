@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Edu+NSW+ACT+Foundation&display=swap");
+
+:root {
+  --c-size-b: #383838;
+  --c-white-b: #f3d5d5fa;
+  --c-gray: #f0f0f0;
+  --c-ssize: #797979;
+  --c-white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "DancingScript", sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
