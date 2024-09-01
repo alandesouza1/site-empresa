@@ -1,10 +1,10 @@
-// Lista de sites
+// Lista de sites com nomes e URLs
 var sites = [
-    'https://www.site1.com',
-    'https://www.site2.com',
-    'https://www.site3.com',
-    'https://www.site4.com',
-    'https://www.site5.com',
+    { name: 'Google', url: 'https://www.google.com' },
+    { name: 'Wikipedia', url: 'https://www.wikipedia.org' },
+    { name: 'YouTube', url: 'https://www.youtube.com' },
+    { name: 'GitHub', url: 'https://www.github.com' },
+    { name: 'Stack Overflow', url: 'https://stackoverflow.com' }
 ];
 
 var currentIndex = 0;
@@ -14,7 +14,7 @@ var isPaused = false;
 
 function loadSite(index) {
     var iframe = document.getElementById('content-frame');
-    iframe.src = sites[index];
+    iframe.src = sites[index].url;
     highlightActiveSite(index);
 }
 
@@ -47,6 +47,23 @@ function showNextSite() {
     loadSite(currentIndex);
 }
 
+function adjustTime() {
+    var newTime = prompt("Insira o novo tempo de rotação em segundos:", remainingTime / 1000);
+    if (newTime !== null && !isNaN(newTime) && newTime > 0) {
+        remainingTime = newTime * 1000; // Converte segundos para milissegundos
+        if (!isPaused) {
+            startTimer();
+        }
+    } else {
+        alert("Por favor, insira um valor válido.");
+    }
+}
+
+function openInNewTab() {
+    var currentSite = sites[currentIndex];
+    window.open(currentSite.url, '_blank');
+}
+
 function highlightActiveSite(index) {
     var siteButtons = document.querySelectorAll('#site-list button');
     siteButtons.forEach(function(button, i) {
@@ -59,7 +76,7 @@ function createSiteList() {
     sites.forEach(function(site, index) {
         var li = document.createElement('li');
         var button = document.createElement('button');
-        button.textContent = site;
+        button.textContent = site.name; // Exibe o nome do site
         button.onclick = function() {
             currentIndex = index;
             loadSite(currentIndex);
@@ -81,4 +98,6 @@ window.onload = function() {
     document.getElementById('pauseBtn').onclick = pauseRotation;
     document.getElementById('prevBtn').onclick = showPreviousSite;
     document.getElementById('nextBtn').onclick = showNextSite;
+    document.getElementById('adjustTimeBtn').onclick = adjustTime;
+    document.getElementById('openInNewTabBtn').onclick = openInNewTab;
 };
