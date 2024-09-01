@@ -1,27 +1,199 @@
+Entendi. Vou fornecer uma solução completa, incluindo 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Controlador de Iframes</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilos para a sidebar */
+        #sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        #sidebar ul li button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            text-align: left;
+        }
+
+        #sidebar ul li button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para a área principal */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #content-frame {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .button-container button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <h1>Bem vindo!</h1>
-            <ul>
-                <li>Links</li>
-                <li>Procedimentos</li>
-                <li>VideoAll</li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section>
-            
-        </section>
-    </main>
-    
+
+    <!-- Sidebar com a lista de sites -->
+    <div id="sidebar">
+        <h3>Sites Disponíveis</h3>
+        <ul id="site-list">
+            <!-- A lista será preenchida dinamicamente pelo JavaScript -->
+        </ul>
+    </div>
+
+    <!-- Área principal -->
+    <div id="main-content">
+        <!-- Iframe principal -->
+        <iframe id="content-frame" src="" frameborder="0"></iframe>
+
+        <!-- Controles -->
+        <div class="button-container">
+            <button id="prevBtn">Anterior</button>
+            <button id="nextBtn">Próximo</button>
+            <button id="pauseBtn">Pausar</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 </html>
+```
+
+#### **JavaScript (`main.js`)**:
+
+```javascript
+// Lista de sites
+var sites = [
+    'https://www.site1.com',
+    'https://www.site2.com',
+    'https://www.site3.com',
+    'https://www.site4.com',
+    'https://www.site5.com',
+];
+
+var currentIndex = 0;
+var timer;
+var remainingTime = 5000; // 5 segundos para exemplo
+var isPaused = false;
+
+function loadSite(index) {
+    var iframe = document.getElementById('content-frame');
+    iframe.src = sites[index];
+    highlightActiveSite(index);
+}
+
+function startTimer() {
+    clearInterval(timer); // Limpa qualquer temporizador anterior
+    timer = setInterval(function() {
+        currentIndex = (currentIndex + 1) % sites.length; // Passa para o próximo site, volta ao início ao terminar
+        loadSite(currentIndex);
+    }, remainingTime);
+}
+
+function pauseRotation() {
+    if (isPaused) {
+        startTimer();
+        document.getElementById('pauseBtn').textContent = 'Pausar';
+    } else {
+        clearInterval(timer);
+        document.getElementById('pauseBtn').textContent = 'Retomar';
+    }
+    isPaused = !isPaused;
+}
+
+function showPreviousSite() {
+    currentIndex = (currentIndex - 1 + sites.length) % sites.length;
+    loadSite(currentIndex);
+}
+
+function showNextSite() {
+    currentIndex = (currentIndex + 1) % sites.length;
+    loadSite(currentIndex);
+}
+
+function highlightActiveSite(index) {
+    var siteButtons = document.querySelectorAll('#site-list button');
+    siteButtons.forEach(function(button, i) {
+        button.style.backgroundColor = (i === index) ? '#0056b3' : '#007BFF';
+    });
+}
+
+function createSiteList() {
+    var siteList = document.getElementById('site-list');
+    sites.forEach(function(site, index) {
+        var li = document.createElement('li');
+        var button = document.createElement('button');
+        button.textContent = site;
+        button.onclick = function() {
+            currentIndex = index;
+            loadSite(currentIndex);
+            clearInterval(timer); // Pausa a rotação automática ao clicar manualmente
+            document.getElementById('pauseBtn').textContent = 'Retomar';
+            isPaused = true;
+        };
+        li.appendChild(button);
+        siteList.appendChild(li);
+    });
+}
+
+// Inicializa a interface ao carregar a página
+window.onload = function() {
+    createSiteList();
+    loadSite(currentIndex);
+    startTimer();
+
+    document.getElementById('pauseBtn').onclick = pauseRotation;
+    document.getElementById('prevBtn').onclick = showPreviousSite;
+    document.getElementById('nextBtn').onclick = showNextSite;
+};
