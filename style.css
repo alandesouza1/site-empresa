@@ -1,103 +1,85 @@
-// Lista de sites com nomes e URLs
-var sites = [
-    { name: 'Google', url: 'https://www.google.com' },
-    { name: 'Wikipedia', url: 'https://www.wikipedia.org' },
-    { name: 'YouTube', url: 'https://www.youtube.com' },
-    { name: 'GitHub', url: 'https://www.github.com' },
-    { name: 'Stack Overflow', url: 'https://stackoverflow.com' }
-];
-
-var currentIndex = 0;
-var timer;
-var remainingTime = 5000; // 5 segundos para exemplo
-var isPaused = false;
-
-function loadSite(index) {
-    var iframe = document.getElementById('content-frame');
-    iframe.src = sites[index].url;
-    highlightActiveSite(index);
+body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
 
-function startTimer() {
-    clearInterval(timer); // Limpa qualquer temporizador anterior
-    timer = setInterval(function() {
-        currentIndex = (currentIndex + 1) % sites.length; // Passa para o próximo site, volta ao início ao terminar
-        loadSite(currentIndex);
-    }, remainingTime);
+/* Estilos para a sidebar */
+#sidebar {
+    width: 250px;
+    background-color: #f4f4f4;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    height: 100vh; /* Faz a sidebar ocupar toda a altura da janela */
+    overflow-y: auto; /* Adiciona uma barra de rolagem se o conteúdo exceder a altura */
 }
 
-function pauseRotation() {
-    if (isPaused) {
-        startTimer();
-        document.getElementById('pauseBtn').textContent = 'Pausar';
-    } else {
-        clearInterval(timer);
-        document.getElementById('pauseBtn').textContent = 'Retomar';
-    }
-    isPaused = !isPaused;
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
 }
 
-function showPreviousSite() {
-    currentIndex = (currentIndex - 1 + sites.length) % sites.length;
-    loadSite(currentIndex);
+#sidebar ul li {
+    margin-bottom: 10px;
 }
 
-function showNextSite() {
-    currentIndex = (currentIndex + 1) % sites.length;
-    loadSite(currentIndex);
+#sidebar ul li button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    text-align: left;
 }
 
-function adjustTime() {
-    var newTime = prompt("Insira o novo tempo de rotação em segundos:", remainingTime / 1000);
-    if (newTime !== null && !isNaN(newTime) && newTime > 0) {
-        remainingTime = newTime * 1000; // Converte segundos para milissegundos
-        if (!isPaused) {
-            startTimer();
-        }
-    } else {
-        alert("Por favor, insira um valor válido.");
-    }
+#sidebar ul li button:hover {
+    background-color: #0056b3;
 }
 
-function openInNewTab() {
-    var currentSite = sites[currentIndex];
-    window.open(currentSite.url, '_blank');
+/* Estilos para a área principal */
+#main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-function highlightActiveSite(index) {
-    var siteButtons = document.querySelectorAll('#site-list button');
-    siteButtons.forEach(function(button, i) {
-        button.style.backgroundColor = (i === index) ? '#0056b3' : '#007BFF';
-    });
+/* Faz o iframe fixo na tela */
+#content-frame {
+    position: fixed;
+    top: 20px; /* Distância do topo da tela */
+    right: 20px; /* Distância da direita da tela */
+    width: calc(100% - 290px); /* Calcula a largura considerando a sidebar */
+    height: calc(100vh - 80px); /* Calcula a altura ocupando a tela inteira menos 80px (ajustável) */
+    border: 1px solid #ccc;
+    z-index: 1000; /* Mantém o iframe acima de outros elementos */
+    background-color: #fff;
 }
 
-function createSiteList() {
-    var siteList = document.getElementById('site-list');
-    sites.forEach(function(site, index) {
-        var li = document.createElement('li');
-        var button = document.createElement('button');
-        button.textContent = site.name; // Exibe o nome do site
-        button.onclick = function() {
-            currentIndex = index;
-            loadSite(currentIndex);
-            clearInterval(timer); // Pausa a rotação automática ao clicar manualmente
-            document.getElementById('pauseBtn').textContent = 'Retomar';
-            isPaused = true;
-        };
-        li.appendChild(button);
-        siteList.appendChild(li);
-    });
+.button-container {
+    position: fixed; /* Mantém os botões fixos na tela */
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1001; /* Coloca os botões acima do iframe */
 }
 
-// Inicializa a interface ao carregar a página
-window.onload = function() {
-    createSiteList();
-    loadSite(currentIndex);
-    startTimer();
+.button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
 
-    document.getElementById('pauseBtn').onclick = pauseRotation;
-    document.getElementById('prevBtn').onclick = showPreviousSite;
-    document.getElementById('nextBtn').onclick = showNextSite;
-    document.getElementById('adjustTimeBtn').onclick = adjustTime;
-    document.getElementById('openInNewTabBtn').onclick = openInNewTab;
-};
+.button-container button:hover {
+    background-color: #218838;
+}
